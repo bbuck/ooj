@@ -34,6 +34,44 @@ helpers =
       else
         true
 
+  implementItfs: (proto, itfs) ->
+    for interfce in itfs # I'm avoiding the use of the word "Interface"
+      intName = helpers.processClassName interfce
+      intClass = intName[intName.length - 1]
+      intName.splice intName - 1, 1
+      intScope = helpers.processScope intName, jOOP.types.itf
+      if intScope[intClass]?
+        for implFunc in intScope[intClass].functions
+          proto[implFunc] = jOOP.defaults.unimplemented
+
+  extendAbs: (proto, abs) ->
+    absName = @processClassName absClass
+    className = absName[absName.length - 1]
+    absName.splice absName.length - 1, 1
+    scope = @processScope absName, jOOP.types.abs
+    if scope[className]?
+      for member, def of scope[className]
+        if @isCopyableProperty member
+          proto[member] = def
+        else if member is 'abstract'
+          for absFunc in def
+            proto[absFunc] = jOOP.defaults.unimplemented
+
+  extendCls: (proto, extendedCls) ->
+    extendedName = helpers.processClassName extendedCls
+    extendedClass = extendedName[extendedName.length - 1]
+    extendedName.splice extendedName.length - 1, 1
+    extendedScope = helpers.processScope extendedName
+    if extendedScope[extendedClass]?
+      proto._parent = extendedScope[extendedClass]
+      for member, def of extendedScope[extendedClass].prototype
+        if helpers.isCopyableProperty member
+          proto[member] = def
+        else if member is 'extend'
+          @extendAbs def
+        else if member is 'implements'
+          @implementItfs proto, def
+
   # Returns a blank function
   defaultConstructor: ->
     return `(function() {})`
@@ -172,22 +210,11 @@ jOOP =
     proto._className =
       full: qualifiedName
       simple: className
+    if definition.extend? and typeof definition.extend is 'string'
+      helpers.extendCls definition.extend
     for member, def of definition
       if helpers.isCopyableProperty member
         proto[member] = def
-    if definition.extend? and typeof definition.extend is 'string'
-      extendedName = helpers.process definition.extend
-      extendedClass = extendedName[extendedName.length - 1]
-      extendedName.splice extendedName.length - 1, 1
-      extendedScope = helpers.processScope extendedName
-      if extendedScope[extendedClass]?
-        proto._parent = extendedScope[extendedClass]
-        for member, def of extendedScope[extendedClass].prototype
-          if helpers.isCopyableProperty member
-            proto[member] = def
-          else if member is 'abstract'
-            for absFunc in def
-              proto[absFunc] = @defaults.unimplemented
 
     return scope[className]
   ###

@@ -48,6 +48,87 @@
           return true;
       }
     },
+    implementItfs: function(proto, itfs) {
+      var implFunc, intClass, intName, intScope, interfce, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = itfs.length; _i < _len; _i++) {
+        interfce = itfs[_i];
+        intName = helpers.processClassName(interfce);
+        intClass = intName[intName.length - 1];
+        intName.splice(intName - 1, 1);
+        intScope = helpers.processScope(intName, jOOP.types.itf);
+        if (intScope[intClass] != null) {
+          _results.push((function() {
+            var _j, _len2, _ref, _results2;
+            _ref = intScope[intClass].functions;
+            _results2 = [];
+            for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
+              implFunc = _ref[_j];
+              _results2.push(proto[implFunc] = jOOP.defaults.unimplemented);
+            }
+            return _results2;
+          })());
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    },
+    extendAbs: function(proto, abs) {
+      var absFunc, absName, className, def, member, scope, _ref, _results;
+      absName = this.processClassName(absClass);
+      className = absName[absName.length - 1];
+      absName.splice(absName.length - 1, 1);
+      scope = this.processScope(absName, jOOP.types.abs);
+      if (scope[className] != null) {
+        _ref = scope[className];
+        _results = [];
+        for (member in _ref) {
+          def = _ref[member];
+          if (this.isCopyableProperty(member)) {
+            _results.push(proto[member] = def);
+          } else if (member === 'abstract') {
+            _results.push((function() {
+              var _i, _len, _results2;
+              _results2 = [];
+              for (_i = 0, _len = def.length; _i < _len; _i++) {
+                absFunc = def[_i];
+                _results2.push(proto[absFunc] = jOOP.defaults.unimplemented);
+              }
+              return _results2;
+            })());
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      }
+    },
+    extendCls: function(proto, extendedCls) {
+      var def, extendedClass, extendedName, extendedScope, member, _ref, _results;
+      extendedName = helpers.processClassName(extendedCls);
+      extendedClass = extendedName[extendedName.length - 1];
+      extendedName.splice(extendedName.length - 1, 1);
+      extendedScope = helpers.processScope(extendedName);
+      if (extendedScope[extendedClass] != null) {
+        proto._parent = extendedScope[extendedClass];
+        _ref = extendedScope[extendedClass].prototype;
+        _results = [];
+        for (member in _ref) {
+          def = _ref[member];
+          if (helpers.isCopyableProperty(member)) {
+            _results.push(proto[member] = def);
+          } else if (member === 'extend') {
+            _results.push(this.extendAbs(def));
+          } else if (member === 'implements') {
+            _results.push(this.implementItfs(proto, def));
+          } else {
+            _results.push(void 0);
+          }
+        }
+        return _results;
+      }
+    },
     defaultConstructor: function() {
       return (function() {});
     }
@@ -180,7 +261,7 @@
       }
     },
     cls: function(qualifiedName, definition) {
-      var absFunc, className, def, extendedClass, extendedName, extendedScope, member, name, proto, scope, _i, _len, _ref;
+      var className, def, member, name, proto, scope;
       if (definition == null) definition = null;
       scope = null;
       className = null;
@@ -209,30 +290,12 @@
         full: qualifiedName,
         simple: className
       };
+      if ((definition.extend != null) && typeof definition.extend === 'string') {
+        helpers.extendCls(definition.extend);
+      }
       for (member in definition) {
         def = definition[member];
         if (helpers.isCopyableProperty(member)) proto[member] = def;
-      }
-      if ((definition.extend != null) && typeof definition.extend === 'string') {
-        extendedName = helpers.process(definition.extend);
-        extendedClass = extendedName[extendedName.length - 1];
-        extendedName.splice(extendedName.length - 1, 1);
-        extendedScope = helpers.processScope(extendedName);
-        if (extendedScope[extendedClass] != null) {
-          proto._parent = extendedScope[extendedClass];
-          _ref = extendedScope[extendedClass].prototype;
-          for (member in _ref) {
-            def = _ref[member];
-            if (helpers.isCopyableProperty(member)) {
-              proto[member] = def;
-            } else if (member === 'abstract') {
-              for (_i = 0, _len = def.length; _i < _len; _i++) {
-                absFunc = def[_i];
-                proto[absFunc] = this.defaults.unimplemented;
-              }
-            }
-          }
-        }
       }
       return scope[className];
     },
