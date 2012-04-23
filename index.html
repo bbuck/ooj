@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Ooj : An Object Oriented Library for JavaScript" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Ooj</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/bbuck/ooj">Fork Me on GitHub</a>
+
+          <h1 id="project_title">Ooj</h1>
+          <h2 id="project_tagline">An Object Oriented Library for JavaScript</h2>
+
+          <section id="downloads">
+            <a class="zip_download_link" href="https://github.com/bbuck/ooj/zipball/master">Download this project as a .zip file</a>
+            <a class="tar_download_link" href="https://github.com/bbuck/ooj/tarball/master">Download this project as a tar.gz file</a>
+          </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h3>OOJ - Object Oriented Javascript</h3>
+
+<p>OOJ is an attempt to simplify Object Oriented Javascript by offering a lightweight solution to developing classes, interfaces, and abstract classes with a means to extend, implement and use them with ease. Clone OOJ  to use/improve it with:</p>
+
+<pre><code>git clone git@github.com:bbuck/ooj.git
+</code></pre>
+
+<h3>Proposed Use</h3>
+
+<p>Since OOJ is currently in a non-usable state (it's undergoing some basic framework restructuring) I will sample the current idea of interacting with OOJ with a few simple examples.</p>
+
+<p>First, we will define a "Fruit" interface:</p>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">Fruit</span> <span class="o">=</span> <span class="nx">ooj</span><span class="p">.</span><span class="nx">Interface</span><span class="p">({</span>
+  <span class="nx">properties</span><span class="o">:</span> <span class="p">[</span>
+    <span class="s2">"name"</span><span class="p">,</span>
+    <span class="s2">"state"</span>
+  <span class="p">],</span>
+  <span class="nx">functions</span><span class="o">:</span> <span class="p">[</span>
+    <span class="s2">"eat"</span>
+  <span class="p">]</span>
+<span class="p">});</span>
+</pre>
+</div>
+
+
+<p>Simple enough, we could instantiate a Fruit but it wouldn't do us much good:</p>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">Apple</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Fruit</span><span class="p">();</span> <span class="c1">// Throws an Error: "Interfaces cannot be instantiated"</span>
+</pre>
+</div>
+
+
+<p>From there, we can define a subclass called "Apple":</p>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">Apple</span> <span class="o">=</span> <span class="nx">ooj</span><span class="p">.</span><span class="nx">Class</span><span class="p">({</span>
+  <span class="nx">implement</span><span class="o">:</span> <span class="nx">Fruit</span><span class="p">,</span> <span class="c1">// This could essentially be an array too if you were implementing more than one interface</span>
+  <span class="nx">name</span><span class="o">:</span> <span class="s2">"Apple"</span><span class="p">,</span>
+  <span class="nx">state</span><span class="o">:</span> <span class="s2">"Uneaten"</span><span class="p">,</span>
+  <span class="nx">eat</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="s2">"Eaten"</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre>
+</div>
+
+
+<p>From this class definition we can then do:</p>
+
+<div class="highlight">
+<pre><span class="kd">var</span> <span class="nx">myApple</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Apple</span><span class="p">();</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">myApple</span><span class="p">.</span><span class="nx">state</span><span class="p">);</span>
+<span class="c1">// "Uneaten"</span>
+<span class="nx">myApple</span><span class="p">.</span><span class="nx">eat</span><span class="p">();</span>
+<span class="c1">// "Eaten"</span>
+</pre>
+</div>
+
+
+<p>The use here my not be 100% clear but if you need the use of interfaces you can guarantee any class that implements them will contain the properties and functions of the interface. Interfaces will be able to define properties (static) but will ignore any function definitions. If you wish to define default function behavior then Abstract classes may be what you are after.</p>
+
+<p>The idea behind OOJ is, again, to simplify and bring an OOP feel to Javascript.</p>
+
+<h3>Authors and Contributors</h3>
+
+<p><a href="https://github.com/bbuck" class="user-mention">@bbuck</a> is the Author of this project. He decided to build it because the "Object Oriented" Javascript hacks he found were too fractured to make OOP programming in Javascript simple so he began work on OOJ to bring them all into a single library.</p>
+
+<h3>Support or Contact</h3>
+
+<p>Having issues with OOJ? Post them at <a href="https://github.com/bbuck/ooj/issues">OOJ issues page</a>.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Ooj maintained by <a href="https://github.com/bbuck">bbuck</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
