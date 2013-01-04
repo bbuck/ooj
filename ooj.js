@@ -6,9 +6,16 @@ var InvalidArgumentError = function(msg) {
   this.message = msg;
 };
 
-InvalidArgumentError.prototype = new Error
+InvalidArgumentError.prototype = new Error();
 
+var InterfacesCannotBeInstantiatedError = function(msg) {
+  msg = msg || "Interfaces cannot be instantiated. They must be extended.";
+  this.message = msg;
+};
 
+InterfacesCannotBeInstantiatedError.prototype = new Error();
+
+// OOJ object
 var ooj = {
   define: function(type, obj) {
     type = type.toLowerCase();
@@ -24,17 +31,56 @@ var ooj = {
     }
   },
 
-  Class: function(data) { return data; },
+  // Build a class object
+  // construct, extend, implement
+  Class: function(data) { 
+    var clsObj, proto, construct, extend, implement, prop, i, len;
+    if (!(_.isObject(data)))
+      throw new InvalidArgumentError("Data must be an object");
+    if (_(data).has("construct") && _.isFunction(data.construct))
+      clsObj = data.construct;
+    else
+      clsObj = function() {};
+    proto = clsObj.prototype;
+    for (prop in data) {
+      if (prop !== "construct" && prop !== "extend" && prop !== "implement") {
+        (function(property, value) {
+          proto[property] = value;
+        })(prop, data[prop]);
+      }
+    }
+    return clsObj;
+  },
 
-  Interface: function(data) { return data; },
+  // Build an interface class
+  // extend, implement, functions
+  Interface: function(data) { 
+    var intObj, proto, functions, extend, implement, funkName, i, len;
+    if (!(_.isObject(data)))
+      throw new InvalidArgumentError("Data must be an object");
+    if (!(_(data).has("functions") && _.isArray(data.functions)))
+      throw new InvalidArgumentError("In order to define an Interface, you must define the \"functions\" property as an array.");
+    intObj = function() {
+      throw new InterfacesCannotBeInstantiatedError();
+    };
+    proto = intObj.prototype;
+    functions = data.functions;
+    // Handle extend, implement
+    for (i = 0, len = functions.length; i < len; i++) {
+      funkName = functions[i];
+      proto[funkName] = function() {};
+    }
+    return intObj;
+  },
 
   // Build an Enum object and return it
+  // names
   Enum: function(data) { 
     var enumObj = {}, names, values, value = 0, i, len;
     if (!(_.isObject(data)))
       throw new InvalidArgumentError("Data must be an object!");
     if (!(_(data).has("names") && _.isArray(data.names)))
-      throw new InvalidArgumentError("In order to define an Enum, you must define the \"names\" property as an array.")
+      throw new InvalidArgumentError("In order to define an Enum, you must define the \"names\" property as an array.");
     names = data.names;
     values = data.values || [];
     for (i = 0, len = names.length; i < len; i++) {

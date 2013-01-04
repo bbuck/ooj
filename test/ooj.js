@@ -3,7 +3,10 @@ var should = require("should"),
 
 var testTypeFunk = function(type) {
   return function() {
-    return ooj.define(type, {names: ["name"]});
+    return ooj.define(type, {
+      names: ["name"],
+      functions: ["one"]
+    });
   };
 };
 
@@ -55,15 +58,27 @@ describe("Object Oriented Javascript", function() {
     it("should return the same thing as Class", function() {
       var testData = {value: 10},
           first = ooj.define("class", testData),
-          second = ooj.Class(testData);
-      first.should.eql(second);
+          fproto = first.prototype,
+          second = ooj.Class(testData),
+          sproto = second.prototype,
+          prop;
+      for (prop in fproto) {
+        sproto.should.have.property(prop);
+        sproto[prop].should.be.a(typeof(fproto[prop]));
+      }
     });
 
     it("should return the same thing as Interface", function() {
       var testData = {functions: ["first"]},
           first = ooj.define("interface", testData),
-          second = ooj.Interface(testData);
-      first.should.eql(second);
+          fproto = first.prototype,
+          second = ooj.Interface(testData),
+          sproto = second.prototype,
+          prop;
+      for (prop in fproto) {
+        sproto.should.have.property(prop);
+        sproto[prop].should.be.a(typeof(fproto[prop]));
+      }
     });
 
     it("should return the same thing as Enum", function() {
@@ -104,6 +119,78 @@ describe("Object Oriented Javascript", function() {
 
       e.should.have.property("One", 1);
       e.should.have.property("Two", 2);
+    });
+  });
+
+  describe("the 'Interface' function", function() {
+    var TestInterface,
+        functions = [
+          "testOne",
+          "testTwo",
+          "testThree"
+        ];
+
+    before(function() {
+      TestInterface = ooj.Interface({
+        functions: functions
+      });
+    });
+
+    it("should return a function", function() {
+      TestInterface.should.be.a("function");
+    });
+
+    it("should not be able to instantiate a new object", function() {
+      (function() {
+        var item = new TestInterface();
+      }).should.throw();
+    });
+
+    it("should contain the given functions", function() {
+      for (var i = 0, len = functions.length; i < len; i++) {
+        var funk = functions[i];
+        TestInterface.prototype.should.have.property(funk);
+        TestInterface.prototype[funk].should.be.a("function");
+      }
+    });
+  });
+
+  describe("the 'Class' function", function() {
+    var TestClass;
+
+    before(function() {
+      TestClass = ooj.Class({
+        construct: function(val) {
+          this.value = val;
+        },
+        setValue: function(val) {
+          this.value = val;
+        },
+        getValue: function() {
+          return this.value;
+        }
+      });
+    });
+
+    it("should return a function", function() {
+      TestClass.should.be.a("function");
+    });
+
+    it("should be capable of instantiation", function() {
+      (function() {
+        var item = new TestClass(10);
+      }).should.not.throw();
+    });
+
+    it("should use the construct function defined", function() {
+      var item = new TestClass(10);
+      item.value.should.eql(10);
+    });
+
+    it("should be defined as a proper class", function() {
+      var item = new TestClass(10);
+      item.setValue(18);
+      item.getValue().should.eql(18);
     });
   });
 
