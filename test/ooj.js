@@ -194,4 +194,93 @@ describe("Object Oriented Javascript", function() {
     });
   });
 
+  describe("The implement functionality", function() {
+    var TestInterface, TestClass;
+
+    before(function() {
+      TestInterface = ooj.Interface({
+        functions: [
+          "hasOne",
+          "hasTwo"
+        ]
+      });
+      TestClass = ooj.Class({
+        implement: TestInterface,
+        hasOne: function() {
+          return "defined differently";
+        }
+      });
+    });
+
+    describe("the TestClass", function() {
+      it("should have the same functions as the TestInterface", function() {
+        var p = TestClass.prototype;
+        p.should.have.property("hasOne");
+        p.hasOne.should.be.a("function");
+        p.should.have.property("hasTwo");
+        p.hasTwo.should.be.a("function");
+      });
+
+      it("should have it's custom defined testOne function", function() {
+        var temp = new TestClass(),
+            ret = temp.hasOne();
+        ret.should.eql("defined differently");
+      });
+    });
+  });
+
+  describe("The extend functionality", function() {
+    var Fruit, Apple;
+
+    before(function() {
+      Fruit = ooj.Class({
+        construct: function() {
+          this.eaten = false;
+        },
+        eat: function() {
+          this.eaten = true;
+        },
+        hasBeenEaten: function() {
+          return this.eaten;
+        },
+        getName: function() {
+          return "Unnamed";
+        }
+      });
+      Apple = ooj.Class({
+        extend: Fruit,
+        getName: function() {
+          return "Apple";
+        }
+      });
+    });
+
+    describe("The Apple class", function() {
+      var app;
+
+      before(function() {
+        app = new Apple();
+      });
+
+      it("should have the same functions as Fruit", function() {
+        app.should.have.property("eaten", false);
+        app.should.have.property("eat");
+        app.eat.should.be.a("function");
+        app.should.have.property("hasBeenEaten");
+        app.hasBeenEaten.should.be.a("function");
+        app.should.have.property("getName");
+        app.getName.should.be.a("function");
+      });
+
+      it("should function like Fruit", function() {
+        app.eat();
+        app.hasBeenEaten().should.eql(true);
+      });
+
+      it("should have a different getName function", function() {
+        app.getName().should.eql("Apple");
+      });
+    });
+  });
+
 });

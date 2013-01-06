@@ -1,19 +1,75 @@
 var _ = require("underscore");
 
 // Define errors
-var InvalidArgumentError = function(msg) {
+function InvalidArgumentError(msg) {
   msg = msg || "Invalid arguments given.";
   this.message = msg;
-};
+}
 
 InvalidArgumentError.prototype = new Error();
 
-var InterfacesCannotBeInstantiatedError = function(msg) {
+function InterfacesCannotBeInstantiatedError(msg) {
   msg = msg || "Interfaces cannot be instantiated. They must be extended.";
   this.message = msg;
-};
+}
 
 InterfacesCannotBeInstantiatedError.prototype = new Error();
+
+function CannotExtendMultipleClasses(msg) {
+  msg = msg || "Cannot extend multiple classes, only one.";
+  this.message = msg;
+}
+
+CannotExtendMultipleClasses.prototype = new Error();
+
+// Helper functions
+
+// Test if value exists
+function exists(val) {
+  return !(_.isNull(val)) && !(_.isUndefined(val))
+}
+
+// Implement the given interfaces
+function implementInterfaces(obj, impl) {
+  if (!exists(impl))
+    return obj;
+  if (!(_.isArray(impl)))
+    impl = [impl];
+  var proto = obj.prototype,
+      iproto, i, len, prop;
+  for (i = 0, len = impl.length; i < len; i++) {
+    if (impl[i].__interface) {
+      iproto = impl[i].prototype;
+      for (prop in iproto) {
+        if (_.isFunction(iproto[prop]) && !exists(proto[prop]))
+          proto[prop] = function() {};
+      }
+    }
+  }
+  return obj;
+}
+
+// Extend the object with the given object
+function extendClass(obj, _super) {
+  if (!(exists(_super)) || _.isArray(_super))
+    return obj;
+  var self, oldProto, prop, proto, sproto;
+  oldProto = obj.prototype;
+  self = obj;
+  self.prototype = {};
+  sproto = _super.prototype;
+  obj = function() {
+    _super.apply(this, arguments);
+    self.apply(this, arguments);
+  };
+  obj.prototype = oldProto;
+  proto = obj.prototype;
+  for (prop in sproto) {
+    if (!exists(proto[prop]))
+      proto[prop] = sproto[prop];
+  }
+  return obj;
+}
 
 // OOJ object
 var ooj = {
@@ -34,7 +90,7 @@ var ooj = {
   // Build a class object
   // construct, extend, implement
   Class: function(data) { 
-    var clsObj, proto, construct, extend, implement, prop, i, len;
+    var clsObj, proto, prop, i, len;
     if (!(_.isObject(data)))
       throw new InvalidArgumentError("Data must be an object");
     if (_(data).has("construct") && _.isFunction(data.construct))
@@ -49,11 +105,13 @@ var ooj = {
         })(prop, data[prop]);
       }
     }
+    clsObj = implementInterfaces(clsObj, data.implement);
+    clsObj = extendClass(clsObj, data.extend);
     return clsObj;
   },
 
   // Build an interface class
-  // extend, implement, functions
+  // functions
   Interface: function(data) { 
     var intObj, proto, functions, extend, implement, funkName, i, len;
     if (!(_.isObject(data)))
@@ -65,11 +123,11 @@ var ooj = {
     };
     proto = intObj.prototype;
     functions = data.functions;
-    // Handle extend, implement
     for (i = 0, len = functions.length; i < len; i++) {
       funkName = functions[i];
       proto[funkName] = function() {};
     }
+    intObj.__interface = true;
     return intObj;
   },
 
