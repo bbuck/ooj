@@ -71,6 +71,24 @@ function extendClass(obj, _super) {
   return obj;
 }
 
+// Generate an isInstanceOf function
+function generateIsInstanceOf(list) {
+  return function(_parent) {
+    var i, len, _super;
+    for (i = 0, len = list.length; i < len; i++) {
+      _super = list[i];
+      if (_parent === _super)
+        return true;
+      else if (exists(_super.prototype.isInstanceOf)) {
+        var is = _super.prototype.isInstanceOf.call(this, _parent);
+        if (is)
+          return true;
+      }
+    }
+    return false;
+  };
+}
+
 // OOJ object
 var ooj = {
   define: function(type, obj) {
@@ -90,7 +108,7 @@ var ooj = {
   // Build a class object
   // construct, extend, implement
   Class: function(data) { 
-    var clsObj, proto, prop, i, len;
+    var clsObj, proto, prop, parents, i, len;
     if (!(_.isObject(data)))
       throw new InvalidArgumentError("Data must be an object");
     if (_(data).has("construct") && _.isFunction(data.construct))
@@ -107,6 +125,8 @@ var ooj = {
     }
     clsObj = implementInterfaces(clsObj, data.implement);
     clsObj = extendClass(clsObj, data.extend);
+    parents = _.compact(_.union(data.extend, data.implement));
+    proto.isInstanceOf = generateIsInstanceOf(parents);
     return clsObj;
   },
 

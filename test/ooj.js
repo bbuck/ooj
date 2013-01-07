@@ -1,14 +1,20 @@
 var should = require("should"),
     ooj = require("../index");
 
-var testTypeFunk = function(type) {
+function testTypeFunk(type) {
   return function() {
     return ooj.define(type, {
       names: ["name"],
       functions: ["one"]
     });
   };
-};
+}
+
+function instantiate(Klass) {
+  return function() {
+    var test = new Klass();
+  };
+}
 
 describe("Object Oriented Javascript", function() {
   
@@ -141,9 +147,7 @@ describe("Object Oriented Javascript", function() {
     });
 
     it("should not be able to instantiate a new object", function() {
-      (function() {
-        var item = new TestInterface();
-      }).should.throw();
+      instantiate(TestInterface).should.throw();
     });
 
     it("should contain the given functions", function() {
@@ -279,6 +283,150 @@ describe("Object Oriented Javascript", function() {
 
       it("should have a different getName function", function() {
         app.getName().should.eql("Apple");
+      });
+    });
+
+    describe("chained inheritance", function() {
+      var Edible, Food, IceCream;
+
+      before(function() {
+        Edible = ooj.Class({
+          construct: function() {
+            this.eaten = false;
+          },
+          eat: function() {
+            this.eaten = true;
+          }
+        });
+        Food = ooj.Class({
+          extend: Edible,
+          construct: function() {
+            this.isFood = true;
+            this.flavor = "None";
+          },
+          getFlavor: function() {
+            return this.flavor;
+          }
+        });
+        IceCream = ooj.Class({
+          extend: Food,
+          construct: function() {
+            this.flavor = "Sugary Sweet";
+          }
+        });
+      });
+
+      describe("the 'Edible' class", function() {
+        it("should work like a normal class", function() {
+          instantiate(Edible).should.not.throw();
+        });
+
+        it("should be 'edible'", function() {
+          var item = new Edible();
+          item.eat();
+          item.eaten.should.eql(true);
+        });
+      });
+
+      describe("the 'Food' class", function() {
+        it("should work like a normal class", function() {
+          instantiate(Food).should.not.throw();
+        });
+
+        it("should be 'edible'", function() {
+          var item = new Food();
+          item.eat();
+          item.eaten.should.eql(true);
+        });
+
+        it("should have a flavor", function() {
+          var item = new Food();
+          item.getFlavor().should.eql("None");
+        });
+      });
+
+      describe("the 'IceCream' class", function() {
+        it("should function like a normal class", function() {
+          instantiate(IceCream).should.not.throw();
+        });
+
+        it("should be 'edible'", function() {
+          var item = new IceCream();
+          item.eat();
+          item.eaten.should.eql(true);
+        });
+
+        it("should have a flavor", function() {
+          var item = new IceCream();
+          item.getFlavor().should.eql("Sugary Sweet");
+        });
+
+        it("should have a flavor different from Food", function() {
+          var food = new Food(),
+              ic = new IceCream();
+          food.getFlavor().should.not.eql(ic.getFlavor());
+        });
+      });
+    });
+  });
+
+  describe("the 'isInstanceOf' function", function() {
+    var ClassA, InterfaceA, ClassB, ClassC;
+
+    before(function() {
+      ClassA = ooj.Class({
+        one: function() {
+          return 1;
+        }
+      });
+      InterfaceA = ooj.Interface({
+        functions: [
+          "two"
+        ]
+      });
+      ClassB = ooj.Class({
+        extend: ClassA,
+        implement: InterfaceA,
+        three: function() {
+          return 3;
+        }
+      });
+      ClassC = ooj.Class({
+        extend: ClassB,
+        four: function() {
+          return 4;
+        }
+      });
+    });
+
+    it("should have an isInstanceOf function", function() {
+      ClassA.prototype.should.have.property("isInstanceOf");
+      ClassA.prototype.isInstanceOf.should.be.a("function");
+      InterfaceA.prototype.should.not.have.property("isInstanceOf");
+      ClassB.prototype.should.have.property("isInstanceOf");
+      ClassB.prototype.isInstanceOf.should.be.a("function");
+    });
+
+    it("should determine ClassB extends ClassA", function() {
+      var b = new ClassB();
+      b.isInstanceOf(ClassA).should.eql(true);
+    });
+
+    it("should determine ClassB implements InterfaceA", function() {
+      var b = new ClassB();
+      b.isInstanceOf(InterfaceA).should.eql(true);
+    });
+
+    describe("class C", function() {
+      it("should inherit from ClassB", function() {
+        var c = new ClassC();
+        c.isInstanceOf(ClassB).should.eql(true);
+      });
+
+      it("should inherit from the same things as ClassB", function() {
+        var c = new ClassC();
+        c.isInstanceOf(ClassA).should.eql(true);
+        c.isInstanceOf(InterfaceA).should.eql(true);
       });
     });
   });
