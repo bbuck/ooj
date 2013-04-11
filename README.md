@@ -115,4 +115,4 @@ The `extend` property is used to to extend the functionality of a single class, 
 relationships created with by these properties can be tested for with a function on each
 OOJ Class instance, `isInstanceOf`.
 
-**Currently Unfinsihed**
+**Currently Unfinished**
