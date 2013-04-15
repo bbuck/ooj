@@ -6,7 +6,7 @@ objects and calling the necessary functions.
 
 ## Creating Enum Objects
 
-In order to create an Enum object you must define a `names` property as an array of names, with 
+In order to create an Enum object you must define a `names` property as an array of names, with
 an optionally given set of values for each Enum property.
 
 Defining a simple Enum is... well simple!
@@ -72,7 +72,7 @@ if (Sample.Six === 6)
 ## Creating Interfaces
 
 An Interface made by OOJ is simply a Javascript class with empty functions and a constructor
-function that throws an error when the Interface is instantiated. Interfaces can be 
+function that throws an error when the Interface is instantiated. Interfaces can be
 implemented by OOJ Classes. Interfaces are extremely easy to define, assuming you want create
 an object that has an area function, like a Shape:
 
@@ -83,13 +83,13 @@ var Shape = ooj.Interface({
   ]
 });
 ```
-And OOJ Interface is defined by simple specifying the functions that are present on the 
-Interface. 
+And OOJ Interface is defined by simple specifying the functions that are present on the
+Interface.
 
 ## Creating Classes
 
 An OOJ Class isn't much different from a standard Javascript class but with a simpler and more
-strightforward declaration syntax. Defining a simple class is just like defining a Javascript 
+strightforward declaration syntax. Defining a simple class is just like defining a Javascript
 object.
 
 ```javascript
@@ -105,14 +105,43 @@ test.hello();
 // "Hello, World"
 ```
 
-In order to define a constructor function for OOJ Classes you define a function called 
-`construct` on the object given to the call to ooj.Class. There are two other special 
-properties for OOJ Classes, `extend` and `implement` properties are used to create 
-Classes that receive functionality from other Classes. 
+In order to define a constructor function for OOJ Classes you define a function called
+`construct` on the object given to the call to ooj.Class. There are two other special
+properties for OOJ Classes, `extend` and `implement` properties are used to create
+Classes that receive functionality from other Classes.
 
 The `extend` property is used to to extend the functionality of a single class, while the
 `implement` property is used to implement functions from one or more interfaces. The
-relationships created with by these properties can be tested for with a function on each
+relationships created by these properties can be tested for with a function on each
 OOJ Class instance, `isInstanceOf`.
 
-**Currently Unfinished**
+```javascript
+var Fruit = ooj.Interface({
+  functions: [
+    "eat",
+    "isFruit"
+  ]
+});
+
+var Apple = ooj.Class({
+  implement: Fruit,
+  construct: function() {
+    this.eaten = false;
+  },
+  eat: function() {
+    this.eaten = true;
+  },
+  isFruit: function() {
+    return true;
+  }
+});
+
+var test = new Apple();
+console.log(test.isInstanceOf(Fruit));
+// true
+```
+
+A class can implement one or more interfaces as needed, you can either pass an
+interface or an array of interfaces via the `implement` property such as:
+`implement: Fruit` or `implement: [Fruit, Edible]` depending on the needs of the
+class.

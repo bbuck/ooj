@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    <title>OOJ Browser Test</title>
+  </head>
+  <body>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+    <script src="../ooj.js"></script>
+    <script>
+      var OojTest = ooj.Class({
+        construct: function() {
+          this.el = document.createElement("div");
+          this.el.innerHTML = "OOJ runs in a browser";
+        },
+        addElement: function() {
+          document.getElementsByTagName("body")[0].appendChild(this.el);
+        }
+      });
+
+      var oojTest = new OojTest();
+      oojTest.addElement();
+    </script>
+  </body>
+</html>
