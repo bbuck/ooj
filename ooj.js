@@ -56,14 +56,12 @@
       var self, oldProto, prop, proto, sproto;
       oldProto = obj.prototype;
       self = obj;
-      self.prototype = {};
       sproto = _super.prototype;
       obj = function() {
         _super.apply(this, arguments);
         self.apply(this, arguments);
       };
-      obj.prototype = oldProto;
-      proto = obj.prototype;
+      proto = obj.prototype = oldProto;
       for (prop in sproto) {
         if (!exists(proto[prop]))
           proto[prop] = sproto[prop];

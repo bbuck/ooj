@@ -1,7 +1,24 @@
 {
   "name": "ooj",
   "version": "0.1.0",
-  "author": "Brandon Buck <lordizuriel@gmail.com>",
+  "author": {
+    "name": "Brandon Buck",
+    "email": "<lordizuriel@gmail.com>",
+    "url": "http://blog.brandonbuck.me"
+  },
+  "description": "Simplifies the creation of objects and other OO constructs in Javascript.",
+  "keyworkds": ["object oriented", "oo", "oop", "ooj", "class", "interface", "enum"],
+  "homepage": "http://blog.brandonbuck.me/ooj/",
+  "issues": "https://github.com/bbuck/ooj/issues",
+  "license": "mit",
+  "files": ["index.js", "ooj.js"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bbuck/ooj"
+  },
+  "engines": {
+    "node": ">= 0.8 < 0.11"
+  },
   "dependencies": {
     "underscore": "1.4.3"
   }
