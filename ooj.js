@@ -9,7 +9,7 @@
 
   function InterfacesCannotBeInstantiatedError(msg) {
     this.name = "InterfacesCannotBeInstantiatedError";
-    this.message = msg || "Interfaces cannot be instantiated. They must be extended.";
+    this.message = msg || "Interfaces cannot be instantiated. They must be implemented.";
   }
 
   InterfacesCannotBeInstantiatedError.prototype = Error.prototype;
