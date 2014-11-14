@@ -6,67 +6,83 @@ objects and calling the necessary functions.
 
 ## Creating Enum Objects
 
-In order to create an Enum object you must define a `names` property as an array of names, with
-an optionally given set of values for each Enum property.
+In order to create an Enum object you must define a `values` property as an array of names or name-value pairs.
 
 Defining a simple Enum is... well simple!
 
 ```javascript
 var Gender = ooj.Enum({
-  names: [
+  values: [
     "Male",
     "Female"
   ]
 });
 
 // From here, you can use the Enum
-var user = {};
-user.gender = Gender.Male;
-if (gender === Gender.Male)
+var user = {
+  gender: Gender.Male
+};
+if (user.gender === Gender.Male) {
   console.log("True");
+}
 ```
 
-By default, each name is assigned a value starting 0 unless values are specified.
+By default, each name is assigned a value starting at 0 unless values are specified. Specify values by passing an array as the member in the values key.
 
 ```javascript
 var Gender = ooj.Enum({
-  names: [
-    "Male",
-    "Female"
-  ],
   values: [
-    10,
-    20
+    ["Male", 10],
+    ["Female", 20]
   ]
 });
 
 // From here, you can use the Enum
-if (Gender.Male === 10)
+if (Gender.Male.value === 10) {
   console.log("True");
+}
 ```
 
-Values can be set to start a sequence, and if the value is a number it will continue from that point, but values can be set to whatever is necessary.
+Values can be set to start a sequence, and if the value is a number it will continue from that point, but values can be set to any type necessary - although the last number in the numeric sequence will be used for all enumerated values without an explicit value.
 
 ```javascript
 var Sample = ooj.Enum({
-  names: [
-    "One",
-    "Five",
-    "Six",
-    "Ten",
-    "DefaultName"
-  ],
   values: [
-    1,
-    5,
-    null,
-    10,
-    "Peter Programmer"
+    ["One", 1],
+    ["Five", 5],
+    "Six",
+    ["Ten", 10],
+    ["DefaultName", "Peter Programmer"]
   ]
 });
 
-if (Sample.Six === 6)
+if (Sample.Six.value === 6) {
   console.log("This is completely true");
+}
+```
+
+You can define functions on enum objects, allowing for more useful and dynamic enum objects. After all, if this wasn't the case then an enum would be nothing more than a plain JavaScript object.
+
+```javascript
+var Gender = ooj.Enum({
+  values: [
+    "Male",
+    "Female"
+  ],
+  functions: {
+    heShe: function() {
+      if (this.value === 0) {
+        return "he";
+      } else {
+        return "she";
+      }
+    }
+  }
+});
+
+if (Gender.Male.heShe() === "he" && Gender.Female.heShe() === "she") {
+  console.log("True again.");
+}
 ```
 
 ## Creating Interfaces

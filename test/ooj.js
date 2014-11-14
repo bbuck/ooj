@@ -4,7 +4,7 @@ var should = require("should"),
 function testTypeFunk(type) {
   return function() {
     return ooj.define(type, {
-      names: ["name"],
+      values: ["name"],
       functions: ["one"]
     });
   };
@@ -17,7 +17,7 @@ function instantiate(Klass) {
 }
 
 describe("Object Oriented Javascript", function() {
-  
+
   describe("ooj", function() {
     it("should have a 'define' function", function() {
       ooj.should.have.property("define");
@@ -88,7 +88,7 @@ describe("Object Oriented Javascript", function() {
     });
 
     it("should return the same thing as Enum", function() {
-      var testData = {names: ["One"]},
+      var testData = {values: ["One"]},
           first = ooj.define("enum", testData),
           second = ooj.Enum(testData);
       first.should.eql(second);
@@ -100,7 +100,7 @@ describe("Object Oriented Javascript", function() {
 
     before(function() {
       TestEnum = ooj.Enum({
-        names: [
+        values: [
           "One",
           "Two",
           "Three",
@@ -111,20 +111,58 @@ describe("Object Oriented Javascript", function() {
 
     it("should create an object with the right properties", function() {
       TestEnum.should.be.a("object");
-      TestEnum.should.have.property("One", 0);
-      TestEnum.should.have.property("Two", 1);
-      TestEnum.should.have.property("Three", 2);
-      TestEnum.should.have.property("Four", 3);
+
+      TestEnum.should.have.property("One");
+      TestEnum.One.value.should.eql(0);
+
+      TestEnum.should.have.property("Two");
+      TestEnum.Two.value.should.eql(1);
+
+      TestEnum.should.have.property("Three");
+      TestEnum.Three.value.should.eql(2);
+
+      TestEnum.should.have.property("Four");
+      TestEnum.Four.value.should.eql(3);
     });
 
     it("should allow you to set values", function() {
       var e = ooj.Enum({
-        names: ["One", "Two"], 
-        values: [1]
+        values: [
+          ["One", 1],
+          "Two"
+        ]
       });
 
-      e.should.have.property("One", 1);
-      e.should.have.property("Two", 2);
+      e.should.have.property("One");
+      e.One.value.should.eql(1);
+      e.should.have.property("Two");
+      e.Two.value.should.eql(2);
+    });
+
+    it("should allow you to define functions", function() {
+      var e = ooj.Enum({
+        values: [
+          "Male",
+          "Female"
+        ],
+        functions: {
+          heShe: function() {
+            if (this.value === 0) {
+              return "he";
+            } else {
+              return "she";
+            }
+          }
+        }
+      });
+
+      e.Male.should.have.property("heShe");
+      e.Male.heShe.should.be.a("function");
+      e.Male.heShe().should.eql("he");
+
+      e.Female.should.have.property("heShe");
+      e.Female.heShe.should.be.a("function");
+      e.Female.heShe().should.eql("she");
     });
   });
 
@@ -366,6 +404,38 @@ describe("Object Oriented Javascript", function() {
               ic = new IceCream();
           food.getFlavor().should.not.eql(ic.getFlavor());
         });
+      });
+    });
+
+    describe("$super functionality", function() {
+      var Animal, Dog;
+
+      before(function() {
+        Animal = ooj.Class({
+          move: function() {
+            return "Moves...";
+          },
+
+          toString: function() {
+            return "Animal";
+          }
+        });
+
+        Dog = ooj.Class({
+          extend: Animal,
+          move: function() {
+            return this.$super();
+          }
+        });
+      });
+
+      it("should not interfere with standard usage", function() {
+        instantiate(Dog).should.not.throw();
+      });
+
+      it("should should allow super class method to be called", function() {
+        var d = new Dog();
+        d.move().should.eql("Moves...");
       });
     });
   });
