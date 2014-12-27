@@ -501,4 +501,53 @@ describe("Object Oriented Javascript", function() {
     });
   });
 
+  describe("the 'isAssignableFrom' function", function() {
+    before(function() {
+      ClassA = ooj.Class({
+        one: function() {
+          return 1;
+        }
+      });
+      InterfaceA = ooj.Interface({
+        functions: [
+          "two"
+        ]
+      });
+      ClassB = ooj.Class({
+        extend: ClassA,
+        implement: InterfaceA,
+        three: function() {
+          return 3;
+        }
+      });
+      ClassC = ooj.Class({
+        extend: ClassB,
+        four: function() {
+          return 4;
+        }
+      });
+    });
+
+    it("classes should have an isAssignableFrom method", function() {
+      ClassC.should.have.property("isAssignableFrom");
+      ClassC.isAssignableFrom.should.be.a("function");
+      ClassB.should.have.property("isAssignableFrom");
+      ClassB.isAssignableFrom.should.be.a("function");
+      ClassA.should.have.property("isAssignableFrom");
+      ClassA.isAssignableFrom.should.be.a("function");
+    });
+
+    it("should report if the class extends/implements another class", function() {
+      ClassB.isAssignableFrom(ClassA).should.eql(true);
+      ClassB.isAssignableFrom(InterfaceA).should.eql(true);
+
+      describe("ClassC", function() {
+        it("should chain up for inheritance", function() {
+          ClassC.isAssignableFrom(ClassB);
+          ClassC.isAssignableFrom(ClassA);
+          ClassC.isAssignableFrom(InterfaceA);
+        });
+      });
+    });
+  });
 });

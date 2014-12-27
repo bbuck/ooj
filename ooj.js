@@ -188,6 +188,7 @@
         cls = extendClass(cls, data.extend);
         parents = _.compact(_.flatten([data.extend, data.implement]));
         proto.isInstanceOf = generateIsInstanceOf(parents);
+        cls.isAssignableFrom = generateIsInstanceOf(parents);
 
         return cls;
       },
