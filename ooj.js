@@ -107,12 +107,13 @@
         var i, len, _super;
         for (i = 0, len = list.length; i < len; i++) {
           _super = list[i];
-          if (_parent === _super)
+          if (_parent === _super) {
             return true;
-          else if (exists(_super.prototype.isInstanceOf)) {
+          } else if (exists(_super.prototype.isInstanceOf)) {
             var is = _super.prototype.isInstanceOf.call(this, _parent);
-            if (is)
+            if (is) {
               return true;
+            }
           }
         }
         return false;
@@ -185,7 +186,7 @@
         }
         cls = implementInterfaces(cls, data.implement);
         cls = extendClass(cls, data.extend);
-        parents = _.compact(_.union(data.extend, data.implement));
+        parents = _.compact(_.flatten([data.extend, data.implement]));
         proto.isInstanceOf = generateIsInstanceOf(parents);
 
         return cls;
