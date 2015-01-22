@@ -550,4 +550,51 @@ describe("Object Oriented Javascript", function() {
       });
     });
   });
+
+  describe("getClass function", function() {
+    var ClassA;
+
+    before(function() {
+      ClassA = ooj.Class({});
+    });
+
+    it("should exist on the prototype", function() {
+      ClassA.prototype.should.have.property("getClass");
+      ClassA.prototype.getClass.should.be.a("function");
+    });
+
+    it("should return the class function of the object", function() {
+      var a = new ClassA();
+      a.getClass().should.eql(ClassA);
+    });
+  });
+
+  describe("static methods", function() {
+    var ClassA, ClassB;
+
+    before(function() {
+      ClassA = ooj.Class({
+        statics: {
+          hello: function() { return "Hello"; }
+        }
+      });
+      ClassB = ooj.Class({
+        extend: ClassA
+      });
+    });
+
+    it("should apply static methods", function() {
+      ClassA.should.have.property("hello");
+      ClassA.hello.should.be.a("function");
+
+      ClassA.hello().should.eql("Hello");
+    });
+
+    it("should be inherited", function() {
+      ClassB.should.have.property("hello");
+      ClassB.hello.should.be.a("function");
+
+      ClassB.hello().should.eql("Hello");
+    });
+  });
 });

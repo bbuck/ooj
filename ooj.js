@@ -82,6 +82,13 @@
           proto[prop] = methodWithSuper(proto[prop], sproto[prop]);
         }
       }
+      if (_(_super).has("__statics") && _super.__statics) {
+        _(_super.__statics).each(function(prop) {
+          if (!exists(obj[prop])) {
+            obj[prop] = _super[prop];
+          }
+        });
+      }
 
       return obj;
     };
@@ -178,17 +185,25 @@
         }
         proto = cls.prototype;
         for (prop in data) {
-          if (prop !== "construct" && prop !== "extend" && prop !== "implement") {
+          if ("construct extend implement statics".indexOf(prop) < 0) {
             (function(property, value) {
               proto[property] = value;
             })(prop, data[prop]);
           }
         }
+        if (_(data).has("statics") && _.isObject(data.statics)) {
+          for (prop in data.statics) {
+            (function(property, value) {
+              cls[property] = value;
+            })(prop, data.statics[prop]);
+          }
+          cls.__statics = _.keys(data.statics);
+        }
         cls = implementInterfaces(cls, data.implement);
         cls = extendClass(cls, data.extend);
         parents = _.compact(_.flatten([data.extend, data.implement]));
-        proto.isInstanceOf = generateIsInstanceOf(parents);
-        cls.isAssignableFrom = generateIsInstanceOf(parents);
+        proto.isInstanceOf = cls.isAssignableFrom = generateIsInstanceOf(parents);
+        proto.getClass = function() { return cls; };
 
         return cls;
       },
