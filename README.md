@@ -4,6 +4,20 @@
 single library. Using **OOJ** you can create an **Enum**, **Interface** and **Class** by defining
 objects and calling the necessary functions.
 
+## Why OOJ?
+
+**Native object creation runs faster, it's possible to handle making classes and doing inheritance with native JavaScript so why would I use this library?**
+
+Well, that's a good question. And if native processes work for your needs then by all means - go with those methods. Also consider some similar styled methods like the `extend` method from Underscore.js which do a little bit of object creation. If you're using CoffeeScript or TypeScript then you have no need for OOJ, go enjoy your fancy JavaScript.
+
+So, if you've read this far by now you might be even more confused what purpose this library serves. Here's my reasons for creating it (and using it myself). OOJ provides a clean, clear and somewhat familiar object oriented method for defining classes. It also emulates Interfaces and Enums to provide some additional functionality aside from simple classes. Creating a class, and extend classes does run slower than native JavaScript, but only whent the script is loaded - which isn't that much of an impact on overall performance.
+
+Aside from the syntax it provides some other OO features that are harder to simulate without some work such as the ability to extend and implement previously defined classes. A proper `isInstanceOf` method (and for classes `isAssignableFrom`) which makes inheritance useful. The ability to call super methods from an overridden child method via `this.$super` and of course object creation chains to extended classes.
+
+So, **Why should you choose OOJ?** Well, because it's a simple API to define classes that can extend and implement in a more true to life OO method that you might be familiar with! It makes large object heavy projects much simpler!
+
+Just check out these examples of OOJ's features. 
+
 ## Creating Enum Objects
 
 In order to create an Enum object you must define a `values` property as an array of names or name-value pairs.
