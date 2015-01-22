@@ -185,3 +185,25 @@ new Three().value(); // => 3
 ```
 
 This magical `$super` function is only available in methods that override a parent class method of the same name, and should equal `undefined` in all other methods.
+
+OOJ Classes also support static methods (which can be inherited). Unlike instance methods, class methods do not feature the `this.$super` parent version to call into so if static functions share functionality then it must be reimplemented (unfortunately :/ I'm searching for a solution to this).
+
+```javascript
+var MyObject = ooj.Class({
+  statics: {
+    identity: function(value) {
+      return value;
+    }
+  }
+});
+
+// Now you can call the static method like this
+MyObject.identity(10); // => 10
+
+// And they can be inherited.
+var MyOtherObject = ooj.Class({
+  extend: MyObject
+});
+
+MyOtherObject.identity("one"); // => "one"
+```
