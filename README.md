@@ -207,3 +207,13 @@ var MyOtherObject = ooj.Class({
 
 MyOtherObject.identity("one"); // => "one"
 ```
+
+All OOJ classes have the ability to fetch the function that constructed the class. This functions similarly to Java's `getClass()` or Ruby's `#class` methods.
+
+```javascript
+var Fruit = ooj.Class({});
+var f = new Fruit();
+if (Fruit === f.getClass()) {
+  console.log("This is true!"); // => "This is true!"
+}
+```
