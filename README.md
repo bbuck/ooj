@@ -137,7 +137,7 @@ test.hello();
 // "Hello, World"
 ```
 
-In order to define a constructor function for OOJ Classes you define a function called `construct` on the object given to the call to ooj.Class. There are two other special properties for OOJ Classes, `extend` and `implement` properties are used to create Classes that receive functionality from other Classes.
+In order to define a constructor function for OOJ Classes you define a function called `construct` on the object given to the call to ooj.Class. There are three other special properties for OOJ Classes, `extend` and `implement` properties are used to create Classes that receive functionality from other Classes and `statics` is an object defining static methods.
 
 The `extend` property is used to to extend the functionality of a single class, while the `implement` property is used to implement functions from one or more interfaces. The relationships created by these properties can be tested for with a function on each OOJ Class instance, `isInstanceOf`.
 
