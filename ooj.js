@@ -25,7 +25,7 @@
 
   function defineOoj() {
     var isNull, isUndefined, isNumber, isArray, isFunction, isObject, keys,
-        compact, has, each;
+        compact, has, each, uniq;
     var exists, implementInterfaces, extendClass, methodWithSuper,
         generateIsInstanceOf, createEnumClassObject, ooj;
 
@@ -58,6 +58,19 @@
       }
 
       return output;
+    };
+
+    uniq = function(arr) {
+      var ret = [], i, len;
+      if (isArray(arr)) {
+        for (i = 0, len = arr.length; i < len; ++i) {
+          if (ret.indexOf(arr[i]) < 0) {
+            ret.push(arr[i]);
+          }
+        }
+      }
+
+      return ret;
     };
 
     compact = function(arr) {
@@ -113,7 +126,7 @@
         if (impl._ooj_interface) {
           iproto = impl.prototype;
           for (prop in iproto) {
-            if (isFunction(iproto[prop]) && !exists(proto[prop])) {
+            if (has(iproto, prop) && isFunction(iproto[prop]) && !exists(proto[prop])) {
               proto[prop] = function() {};
             }
           }
@@ -140,6 +153,11 @@
         _super.apply(this, arguments);
         self.apply(this, arguments);
       };
+      if (has(self, "__statics") && self.__statics) {
+        each(self.__statics, function(prop) {
+          obj[prop] = self[prop];
+        });
+      }
       proto = obj.prototype = oldProto;
       for (prop in sproto) {
         if (!exists(proto[prop])) {
@@ -155,6 +173,7 @@
           }
         });
       }
+      obj.__statics = uniq((obj.__statics || []).concat(_super.__statics));
 
       return obj;
     };
@@ -267,7 +286,9 @@
         }
         cls = implementInterfaces(cls, data.implement);
         cls = extendClass(cls, data.extend);
-        parents = compact([].concat(data.extend).concat(data.implement));
+        parents = [].concat(data.implement);
+        parents.push(data.extend);
+        parents = uniq(compact(parents));
         proto.isInstanceOf = cls.isAssignableFrom = generateIsInstanceOf(parents);
         proto.getClass = function() { return cls; };
         proto.constructor = cls;

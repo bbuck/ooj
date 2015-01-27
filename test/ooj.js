@@ -570,7 +570,7 @@ describe("Object Oriented Javascript", function() {
   });
 
   describe("static methods", function() {
-    var ClassA, ClassB;
+    var ClassA, ClassB, ClassC;
 
     before(function() {
       ClassA = ooj.Class({
@@ -580,6 +580,12 @@ describe("Object Oriented Javascript", function() {
       });
       ClassB = ooj.Class({
         extend: ClassA
+      });
+      ClassC = ooj.Class({
+        extend: ClassA,
+        statics: {
+          hello: function() { return "Hola"; }
+        }
       });
     });
 
@@ -595,6 +601,13 @@ describe("Object Oriented Javascript", function() {
       ClassB.hello.should.be.a.Function;
 
       ClassB.hello().should.eql("Hello");
+    });
+
+    it("should be overridable", function() {
+      ClassC.should.have.property("hello");
+      ClassC.hello.should.be.a.Function;
+
+      ClassC.hello().should.eql("Hola");
     });
   });
 });
