@@ -23,13 +23,80 @@
 
   // Helper functions
 
-  function defineOoj(_) {
+  function defineOoj() {
+    var isNull, isUndefined, isNumber, isArray, isFunction, isObject, keys,
+        compact, has, each;
     var exists, implementInterfaces, extendClass, methodWithSuper,
         generateIsInstanceOf, createEnumClassObject, ooj;
 
+    isNumber = function(item) {
+      return Object.prototype.toString.call(item) === "[object Number]";
+    };
+
+    has = function(obj, key) {
+      return obj !== null && obj.hasOwnProperty(key);
+    };
+
+    each = function(arr, fn) {
+      if (Array.prototype.forEach) {
+        arr.forEach(fn);
+      } else {
+        var i, len;
+        for (i = 0, len = arr.length; i < len; ++i) {
+          fn(arr[i]);
+        }
+      }
+    };
+
+    keys = function(obj) {
+      var output = [], key;
+      for (key in obj) {
+        // Filter on unique keys
+        if (has(obj, key)) {
+          output.push(key);
+        }
+      }
+
+      return output;
+    };
+
+    compact = function(arr) {
+      var output = [], i, len;
+      if (isArray(arr)) {
+        for (i = 0, len = arr.length; i < len; ++i) {
+          if (arr[i]) {
+            output.push(arr[i]);
+          }
+        }
+      }
+
+      return output;
+    };
+
+    isObject = function(obj) {
+      var type = typeof obj;
+      return type === "object" || type === "function" && !!obj;
+    };
+
+    isFunction = function(funk) {
+      return typeof funk === "function";
+    };
+
+    isNull = function(item) {
+      return item === null;
+    };
+
+    isUndefined = function(item) {
+      return typeof item === "undefined";
+    };
+
+    isArray = Array.isArray || function(obj) {
+      return Object.prototype.toString.call(obj) === "[object Array]";
+    };
+
     // Test if value exists
     exists = function(val) {
-      return !(_.isNull(val)) && !(_.isUndefined(val))
+      return !(isNull(val)) && !(isUndefined(val))
     };
 
     // Implement the given interfaces
@@ -37,17 +104,16 @@
       if (!exists(impls)) {
         return obj;
       }
-      if (!(_.isArray(impls))) {
+      if (!(isArray(impls))) {
         impls = [impls];
       }
       var proto = obj.prototype,
           iproto, _impl, prop;
-      impls.forEach(function(impl) {
+      each(impls, function(impl) {
         if (impl._ooj_interface) {
-          _impl = _(impl);
           iproto = impl.prototype;
           for (prop in iproto) {
-            if (_.isFunction(iproto[prop]) && !exists(proto[prop])) {
+            if (isFunction(iproto[prop]) && !exists(proto[prop])) {
               proto[prop] = function() {};
             }
           }
@@ -62,7 +128,7 @@
       if (!(exists(_super))) {
         return obj;
       }
-      if (_.isArray(_super)) {
+      if (isArray(_super)) {
         throw new CannotExtendMultipleClasses();
       }
       var self, oldProto, prop, proto, sproto;
@@ -78,12 +144,12 @@
       for (prop in sproto) {
         if (!exists(proto[prop])) {
           proto[prop] = sproto[prop];
-        } else if (_.isFunction(sproto[prop]) && _.isFunction(proto[prop])) {
+        } else if (isFunction(sproto[prop]) && isFunction(proto[prop])) {
           proto[prop] = methodWithSuper(proto[prop], sproto[prop]);
         }
       }
-      if (_(_super).has("__statics") && _super.__statics) {
-        _(_super.__statics).each(function(prop) {
+      if (has(_super, "__statics") && _super.__statics) {
+        each(_super.__statics, function(prop) {
           if (!exists(obj[prop])) {
             obj[prop] = _super[prop];
           }
@@ -134,7 +200,7 @@
         this.value = value;
       };
       proto = cls.prototype;
-      if (exists(funks) && _.isObject(funks)) {
+      if (exists(funks) && isObject(funks)) {
         for (funkName in funks) {
           funk = funks[funkName];
           proto[funkName] = funk;
@@ -175,10 +241,10 @@
       Class: function(data) {
         var cls, proto, prop, parents;
 
-        if (!(_.isObject(data))) {
+        if (!(isObject(data))) {
           throw new InvalidArgumentError("Data must be an object");
         }
-        if (_(data).has("construct") && _.isFunction(data.construct)) {
+        if (has(data, "construct") && isFunction(data.construct)) {
           cls = data.construct;
         } else {
           cls = function() {};
@@ -191,19 +257,20 @@
             })(prop, data[prop]);
           }
         }
-        if (_(data).has("statics") && _.isObject(data.statics)) {
+        if (has(data, "statics") && isObject(data.statics)) {
           for (prop in data.statics) {
             (function(property, value) {
               cls[property] = value;
             })(prop, data.statics[prop]);
           }
-          cls.__statics = _.keys(data.statics);
+          cls.__statics = keys(data.statics);
         }
         cls = implementInterfaces(cls, data.implement);
         cls = extendClass(cls, data.extend);
-        parents = _.compact(_.flatten([data.extend, data.implement]));
+        parents = compact([].concat(data.extend).concat(data.implement));
         proto.isInstanceOf = cls.isAssignableFrom = generateIsInstanceOf(parents);
         proto.getClass = function() { return cls; };
+        proto.constructor = cls;
 
         return cls;
       },
@@ -218,18 +285,17 @@
       */
       Interface: function(data) {
         var intFunk, proto, funkName;
-
-        if (!(_.isObject(data))) {
+        if (!(isObject(data))) {
           throw new InavlidArgumentError("Data must be an object");
         }
-        if (!(_(data).has("functions") && _.isArray(data.functions))) {
+        if (!(has(data, "functions") && isArray(data.functions))) {
           throw new InvalidArgumentError("In order to define an Interface, you must define the \"functions\" property as an array");
         }
         intFunk = function() {
           throw new InterfacesCannotBeInstantiatedError();
         };
         proto = intFunk.prototype;
-        data.functions.forEach(function(funkName) {
+        each(data.functions, function(funkName) {
           proto[funkName] = function() {};
         });
         intFunk._ooj_interface = true;
@@ -248,20 +314,20 @@
       Enum: function(data) {
         var enumObj = {}, enumClass, values, currentValue = 0;
 
-        if (!(_.isObject(data))) {
+        if (!isObject(data)) {
           throw new InvalidArgumentError("Data must be an object!");
         }
-        if (!(_(data).has("values") && _.isArray(data.values))) {
+        if (!(has(data, "values") && isArray(data.values))) {
           throw new InvalidArgumentError("In order to define an Enum, you must define the \"values\" property as an array.");
         }
         enumClass = createEnumClassObject(data.functions);
         values = data.values;
-        values.forEach(function(item) {
+        each(values, function(item) {
           var name, value;
-          if (_.isArray(item)) {
+          if (isArray(item)) {
             name = item[0],
             value = item[1];
-            if (_.isNumber(value)) {
+            if (isNumber(value)) {
               currentValue = value + 1;
             }
           } else {
@@ -278,20 +344,20 @@
     return ooj;
   }
 
-  var windowDefined = typeof(window) !== "undefined" && window != null,
-      requireDefined = typeof(require) !== "undefined" && require != null
-                        && typeof(require) === "function",
-      isBrowser = windowDefined && typeof(window.location) !== "undefined",
+  var windowDefined = typeof window !== "undefined" && window != null,
+      requireDefined = typeof require !== "undefined" && require != null
+                        && typeof require === "function",
+      isBrowser = windowDefined && typeof window.location !== "undefined",
       hasRequire = isBrowser && requireDefined;
 
   // Require JS
   if (hasRequire) {
-    require("ooj", ["underscore"], defineOoj);
+    require("ooj", defineOoj);
   // Standard browser
   } else if (isBrowser) {
-    window.ooj = defineOoj(window._);
+    window.ooj = defineOoj();
   // Node - Common JS
   } else {
-    module.exports = defineOoj(require("underscore"));
+    module.exports = defineOoj();
   }
 })();

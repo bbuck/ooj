@@ -597,4 +597,6 @@ describe("Object Oriented Javascript", function() {
       ClassB.hello().should.eql("Hello");
     });
   });
+
+
 });
