@@ -21,22 +21,22 @@ describe("Object Oriented Javascript", function() {
   describe("ooj", function() {
     it("should have a 'define' function", function() {
       ooj.should.have.property("define");
-      ooj.define.should.be.a("function");
+      ooj.define.should.be.a.Function;
     });
 
     it("should have a 'Class' function on it", function() {
       ooj.should.have.property("Class");
-      ooj.Class.should.be.a("function");
+      ooj.Class.should.be.a.Function;
     });
 
     it("should have an 'Interface' function on it", function() {
       ooj.should.have.property("Interface");
-      ooj.Interface.should.be.a("function");
+      ooj.Interface.should.be.a.Function;
     });
 
     it("should have an 'Enum' function on it", function() {
       ooj.should.have.property("Enum");
-      ooj.Enum.should.be.a("function");
+      ooj.Enum.should.be.a.Function;
     });
   });
 
@@ -70,7 +70,7 @@ describe("Object Oriented Javascript", function() {
           prop;
       for (prop in fproto) {
         sproto.should.have.property(prop);
-        sproto[prop].should.be.a(typeof(fproto[prop]));
+        sproto[prop].should.be.type(typeof fproto[prop]);
       }
     });
 
@@ -83,7 +83,7 @@ describe("Object Oriented Javascript", function() {
           prop;
       for (prop in fproto) {
         sproto.should.have.property(prop);
-        sproto[prop].should.be.a(typeof(fproto[prop]));
+        sproto[prop].should.be.type(typeof fproto[prop]);
       }
     });
 
@@ -110,7 +110,7 @@ describe("Object Oriented Javascript", function() {
     });
 
     it("should create an object with the right properties", function() {
-      TestEnum.should.be.a("object");
+      TestEnum.should.be.a.Object;
 
       TestEnum.should.have.property("One");
       TestEnum.One.value.should.eql(0);
@@ -157,11 +157,11 @@ describe("Object Oriented Javascript", function() {
       });
 
       e.Male.should.have.property("heShe");
-      e.Male.heShe.should.be.a("function");
+      e.Male.heShe.should.be.a.Function;
       e.Male.heShe().should.eql("he");
 
       e.Female.should.have.property("heShe");
-      e.Female.heShe.should.be.a("function");
+      e.Female.heShe.should.be.a.Function;
       e.Female.heShe().should.eql("she");
     });
   });
@@ -181,7 +181,7 @@ describe("Object Oriented Javascript", function() {
     });
 
     it("should return a function", function() {
-      TestInterface.should.be.a("function");
+      TestInterface.should.be.a.Function;
     });
 
     it("should not be able to instantiate a new object", function() {
@@ -192,7 +192,7 @@ describe("Object Oriented Javascript", function() {
       for (var i = 0, len = functions.length; i < len; i++) {
         var funk = functions[i];
         TestInterface.prototype.should.have.property(funk);
-        TestInterface.prototype[funk].should.be.a("function");
+        TestInterface.prototype[funk].should.be.a.Function;
       }
     });
   });
@@ -215,7 +215,7 @@ describe("Object Oriented Javascript", function() {
     });
 
     it("should return a function", function() {
-      TestClass.should.be.a("function");
+      TestClass.should.be.a.Function;
     });
 
     it("should be capable of instantiation", function() {
@@ -258,9 +258,9 @@ describe("Object Oriented Javascript", function() {
       it("should have the same functions as the TestInterface", function() {
         var p = TestClass.prototype;
         p.should.have.property("hasOne");
-        p.hasOne.should.be.a("function");
+        p.hasOne.should.be.a.Function;
         p.should.have.property("hasTwo");
-        p.hasTwo.should.be.a("function");
+        p.hasTwo.should.be.a.Function;
       });
 
       it("should have it's custom defined testOne function", function() {
@@ -307,11 +307,11 @@ describe("Object Oriented Javascript", function() {
       it("should have the same functions as Fruit", function() {
         app.should.have.property("eaten", false);
         app.should.have.property("eat");
-        app.eat.should.be.a("function");
+        app.eat.should.be.a.Function;
         app.should.have.property("hasBeenEaten");
-        app.hasBeenEaten.should.be.a("function");
+        app.hasBeenEaten.should.be.a.Function;
         app.should.have.property("getName");
-        app.getName.should.be.a("function");
+        app.getName.should.be.a.Function;
       });
 
       it("should function like Fruit", function() {
@@ -471,10 +471,10 @@ describe("Object Oriented Javascript", function() {
 
     it("should have an isInstanceOf function", function() {
       ClassA.prototype.should.have.property("isInstanceOf");
-      ClassA.prototype.isInstanceOf.should.be.a("function");
+      ClassA.prototype.isInstanceOf.should.be.a.Function;
       InterfaceA.prototype.should.not.have.property("isInstanceOf");
       ClassB.prototype.should.have.property("isInstanceOf");
-      ClassB.prototype.isInstanceOf.should.be.a("function");
+      ClassB.prototype.isInstanceOf.should.be.a.Function;
     });
 
     it("should determine ClassB extends ClassA", function() {
@@ -530,11 +530,11 @@ describe("Object Oriented Javascript", function() {
 
     it("classes should have an isAssignableFrom method", function() {
       ClassC.should.have.property("isAssignableFrom");
-      ClassC.isAssignableFrom.should.be.a("function");
+      ClassC.isAssignableFrom.should.be.a.Function;
       ClassB.should.have.property("isAssignableFrom");
-      ClassB.isAssignableFrom.should.be.a("function");
+      ClassB.isAssignableFrom.should.be.a.Function;
       ClassA.should.have.property("isAssignableFrom");
-      ClassA.isAssignableFrom.should.be.a("function");
+      ClassA.isAssignableFrom.should.be.a.Function;
     });
 
     it("should report if the class extends/implements another class", function() {
@@ -560,7 +560,7 @@ describe("Object Oriented Javascript", function() {
 
     it("should exist on the prototype", function() {
       ClassA.prototype.should.have.property("getClass");
-      ClassA.prototype.getClass.should.be.a("function");
+      ClassA.prototype.getClass.should.be.a.Function;
     });
 
     it("should return the class function of the object", function() {
@@ -585,18 +585,16 @@ describe("Object Oriented Javascript", function() {
 
     it("should apply static methods", function() {
       ClassA.should.have.property("hello");
-      ClassA.hello.should.be.a("function");
+      ClassA.hello.should.be.a.Function;
 
       ClassA.hello().should.eql("Hello");
     });
 
     it("should be inherited", function() {
       ClassB.should.have.property("hello");
-      ClassB.hello.should.be.a("function");
+      ClassB.hello.should.be.a.Function;
 
       ClassB.hello().should.eql("Hello");
     });
   });
-
-
 });

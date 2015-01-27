@@ -17,9 +17,10 @@
     "url": "https://github.com/bbuck/ooj"
   },
   "engines": {
-    "node": ">= 0.8 < 0.11"
+    "node": ">= 0.8"
   },
-  "dependencies": {
-    "underscore": "1.4.3"
+  "dependencies": { },
+  "devDependencies": {
+    "should": "*"
   }
 }

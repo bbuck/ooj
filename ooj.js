@@ -239,7 +239,7 @@
        *                      other keys are used as method names for the prototype.
        */
       Class: function(data) {
-        var cls, proto, prop, parents;
+        var cons, cls, proto, prop, parents;
 
         if (!(isObject(data))) {
           throw new InvalidArgumentError("Data must be an object");
