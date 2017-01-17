@@ -4,6 +4,8 @@
 single library. Using **OOJ** you can create an **Enum**, **Interface** and **Class** by defining
 objects and calling the necessary functions.
 
+**OOJ is currently defunct, with the onset of ES6 standards for classes and Bable and TypeScript to enable those features I'd hihgly recommend that you use that instead of using this. Do not use this. I'm only leaving this active on Github as a means for archiving work that I've done in the past.**
+
 ## Why OOJ?
 
 **Native object creation runs faster, it's possible to handle making classes and doing inheritance with native JavaScript so why would I use this library?**
