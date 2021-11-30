@@ -1,10 +1,10 @@
+**OOJ is currently defunct, with the onset of ES6 standards for classes and [Babel](http://babeljs.io/) and [TypeScript](https://www.typescriptlang.org/) to enable those features I'd highly recommend that you use one of them instead of using this. DO NOT USE THIS. I'm only leaving this active on Github as a means for archiving work that I've done in the past.**
+
 # Object Oriented JavaScript
 
 **OOJ** is a JavaScript library designed to combine Object Oriented helpers in JavaScript in a
 single library. Using **OOJ** you can create an **Enum**, **Interface** and **Class** by defining
 objects and calling the necessary functions.
-
-**OOJ is currently defunct, with the onset of ES6 standards for classes and [Babel](http://babeljs.io/) and [TypeScript](https://www.typescriptlang.org/) to enable those features I'd highly recommend that you use one of them instead of using this. DO NOT USE THIS. I'm only leaving this active on Github as a means for archiving work that I've done in the past.**
 
 ## Why OOJ?
 
