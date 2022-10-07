@@ -30,7 +30,8 @@ Defining a simple Enum is... well simple!
 var Gender = ooj.Enum({
   values: [
     "Male",
-    "Female"
+    "Female",
+    "Nonbinary"
   ]
 });
 
@@ -49,7 +50,8 @@ By default, each name is assigned a value starting at 0 unless values are specif
 var Gender = ooj.Enum({
   values: [
     ["Male", 10],
-    ["Female", 20]
+    ["Female", 20],
+    ["Nonbinary", 30]
   ]
 });
 
@@ -83,20 +85,24 @@ You can define functions on enum objects, allowing for more useful and dynamic e
 var Gender = ooj.Enum({
   values: [
     "Male",
-    "Female"
+    "Female",
+    "Nonbinary"
   ],
   functions: {
-    heShe: function() {
-      if (this.value === 0) {
-        return "he";
-      } else {
-        return "she";
+    pronoun: function() {
+      switch (this.value) {
+        case 0:
+          return "he";
+        case 1:
+          return "she";
+        default:
+          return "xe";
       }
     }
   }
 });
 
-if (Gender.Male.heShe() === "he" && Gender.Female.heShe() === "she") {
+if (Gender.Male.pronoun() === "he" && Gender.Female.pronoun() === "she" && Gender.Nonbinary.pronoun() === "xe") {
   console.log("True again.");
 }
 ```
